@@ -24,8 +24,15 @@ if (-not $dotnetInstalled) {
 # 1.5 Check FFmpeg
 if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
     Write-Host "[1.5/3] Installing FFmpeg (required for screen capture)..."
-    winget install Gyan.FFmpeg --accept-source-agreements --accept-package-agreements --silent
-    $env:PATH = "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg\bin;$env:PATH"
+    $FfmpegDir = Join-Path $env:USERPROFILE ".lpuplus\ffmpeg"
+    if (-not (Test-Path $FfmpegDir)) {
+        New-Item -ItemType Directory -Force -Path $FfmpegDir | Out-Null
+        $ZipPath = Join-Path $env:TEMP "ffmpeg.zip"
+        Invoke-WebRequest -Uri "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip" -OutFile $ZipPath
+        Expand-Archive -Path $ZipPath -DestinationPath $FfmpegDir -Force
+        Remove-Item $ZipPath -Force
+    }
+    $env:PATH = "$FfmpegDir\ffmpeg-master-latest-win64-gpl\bin;$env:PATH"
 }
 
 # 2. Clone/Update Repo

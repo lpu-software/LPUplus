@@ -19,6 +19,13 @@ if ($Command -eq "start") {
 
     Write-Host "Starting LPU+ Agent in background..."
     $ErrLogFile = Join-Path $ScriptDir "agent_err.log"
+    
+    # Add local FFmpeg to PATH if it exists
+    $FfmpegBin = Join-Path $env:USERPROFILE ".lpuplus\ffmpeg\ffmpeg-master-latest-win64-gpl\bin"
+    if (Test-Path $FfmpegBin) {
+        $env:PATH = "$FfmpegBin;$env:PATH"
+    }
+
     $process = Start-Process -FilePath "dotnet" -ArgumentList "run --project `"$Project`" -- start" -RedirectStandardOutput $LogFile -RedirectStandardError $ErrLogFile -PassThru -WindowStyle Hidden
     $process.Id | Out-File -FilePath $PidFile -Encoding ASCII
 
@@ -46,7 +53,7 @@ elseif ($Command -eq "stop") {
         $pidToKill = Get-Content $PidFile
         $proc = Get-Process -Id $pidToKill -ErrorAction SilentlyContinue
         if ($proc) {
-            Stop-Process -Id $pidToKill -Force
+            taskkill /PID $pidToKill /T /F | Out-Null
             Remove-Item $PidFile -Force
             Write-Host "✅ Agent stopped (PID: $pidToKill)"
         } else {
