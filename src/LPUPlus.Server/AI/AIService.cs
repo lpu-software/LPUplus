@@ -65,7 +65,7 @@ public sealed class AIService
                 });
             }
 
-            var sw = Stopwatch.StartNew();
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             
             var requestBody = new
             {
