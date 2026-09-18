@@ -11,7 +11,7 @@ public sealed class AIService
     private readonly HttpClient _httpClient;
     private readonly ILogger<AIService> _logger;
     private readonly string? _apiKey;
-    private readonly string _modelId = "llama-3.2-90b-vision-preview"; // 11b was decommissioned
+    private readonly string _modelId = "llama-3.2-11b-vision";
 
     public AIService(HttpClient httpClient, ILogger<AIService> logger)
     {
@@ -67,41 +67,46 @@ public sealed class AIService
 
             var requestBody = new
             {
-                model = "llama-3.2-90b-vision-preview",
+                model = "llama-3.2-11b-vision",
                 messages = new[]
                 {
                     new
                     {
                         role = "user",
-                        content = contentList.ToArray()
+                        content = contentList
                     }
-                }
+                },
+                max_tokens = 1000
             };
 
-            var jsonContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-            
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://api.groq.com/openai/v1/chat/completions");
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
-            requestMessage.Content = jsonContent;
+            var requestJson = JsonSerializer.Serialize(requestBody);
+            _logger.LogInformation("Sending request to Groq API...");
+            var httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://api.groq.com/openai/v1/chat/completions")
+            {
+                Headers = { { "Authorization", $"Bearer {_apiKey}" } },
+                Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+            };
 
-            var response = await _httpClient.SendAsync(requestMessage);
+            var response = await _httpClient.SendAsync(httpRequest);
             
             if (!response.IsSuccessStatusCode)
             {
-                var errorText = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"Groq API Error: {errorText}");
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Groq API Error: {Error}", errorBody);
             }
             
             response.EnsureSuccessStatusCode();
 
-            var responseJson = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(responseJson);
-
-            var text = doc.RootElement
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var result = JsonDocument.Parse(responseBody);
+            var text = result.RootElement
                 .GetProperty("choices")[0]
                 .GetProperty("message")
                 .GetProperty("content")
                 .GetString();
+
+            sw.Stop();
+            _logger.LogInformation("Groq API request completed in {ElapsedMs}ms", sw.ElapsedMilliseconds);
 
             return new AIResponseMessage
             {
@@ -109,7 +114,7 @@ public sealed class AIService
                 Success = true,
                 Response = text,
                 Provider = "Groq",
-                Model = "llama-3.2-90b-vision-preview"
+                Model = "llama-3.2-11b-vision"
             };
         }
         catch (Exception ex)
