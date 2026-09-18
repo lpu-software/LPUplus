@@ -65,9 +65,11 @@ public sealed class AIService
                 });
             }
 
+            var sw = Stopwatch.StartNew();
+            
             var requestBody = new
             {
-                model = "llama-3.2-11b-vision",
+                model = _modelId,
                 messages = new[]
                 {
                     new
@@ -114,7 +116,7 @@ public sealed class AIService
                 Success = true,
                 Response = text,
                 Provider = "Groq",
-                Model = "llama-3.2-11b-vision"
+                Model = _modelId
             };
         }
         catch (Exception ex)
