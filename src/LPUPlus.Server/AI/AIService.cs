@@ -11,7 +11,7 @@ public sealed class AIService
     private readonly HttpClient _httpClient;
     private readonly ILogger<AIService> _logger;
     private readonly string? _apiKey;
-    private readonly string _modelId = "llama-3.2-11b-vision";
+    private readonly string _modelId = "qwen/qwen3.8-27b";
 
     public AIService(HttpClient httpClient, ILogger<AIService> logger)
     {
