@@ -200,8 +200,8 @@ function App() {
     }
 
     return {
-      x: Math.round((mouseX / renderWidth) * img.naturalWidth),
-      y: Math.round((mouseY / renderHeight) * img.naturalHeight)
+      x: mouseX / renderWidth,
+      y: mouseY / renderHeight
     };
   };
   const buttonName = (b: number) => b === 1 ? 'middle' : b === 2 ? 'right' : 'left';

@@ -60,11 +60,38 @@ public class MacInputInjector : IInputInjector
     [DllImport("CoreFoundation", EntryPoint = "CFRelease")]
     private static extern void CFRelease(IntPtr cf);
 
+    [DllImport(CoreGraphics, EntryPoint = "CGMainDisplayID")]
+    private static extern uint CGMainDisplayID();
+
+    [DllImport(CoreGraphics, EntryPoint = "CGDisplayBounds")]
+    private static extern CGRect CGDisplayBounds(uint displayId);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CGRect
+    {
+        public CGPoint Origin;
+        public CGSize Size;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct CGSize
+    {
+        public double Width;
+        public double Height;
+    }
+
     private const uint kCGHIDEventTap = 0;
 
-    public void InjectMouseMove(int x, int y)
+    private (double X, double Y) GetAbsoluteCoordinates(double percentX, double percentY)
     {
-        var evt = CGEventCreateMouseEvent(IntPtr.Zero, CGEventType.MouseMoved, new CGPoint(x, y), CGMouseButton.Left);
+        var bounds = CGDisplayBounds(CGMainDisplayID());
+        return (bounds.Size.Width * percentX, bounds.Size.Height * percentY);
+    }
+
+    public void InjectMouseMove(double percentX, double percentY)
+    {
+        var (absX, absY) = GetAbsoluteCoordinates(percentX, percentY);
+        var evt = CGEventCreateMouseEvent(IntPtr.Zero, CGEventType.MouseMoved, new CGPoint(absX, absY), CGMouseButton.Left);
         if (evt != IntPtr.Zero)
         {
             CGEventPost(kCGHIDEventTap, evt);
@@ -72,8 +99,9 @@ public class MacInputInjector : IInputInjector
         }
     }
 
-    public void InjectMouseDown(MouseButton button, int x, int y)
+    public void InjectMouseDown(MouseButton button, double percentX, double percentY)
     {
+        var (absX, absY) = GetAbsoluteCoordinates(percentX, percentY);
         var (cgEvent, cgButton) = button switch
         {
             MouseButton.Right => (CGEventType.RightMouseDown, CGMouseButton.Right),
@@ -81,7 +109,7 @@ public class MacInputInjector : IInputInjector
             _ => (CGEventType.LeftMouseDown, CGMouseButton.Left)
         };
 
-        var evt = CGEventCreateMouseEvent(IntPtr.Zero, cgEvent, new CGPoint(x, y), cgButton);
+        var evt = CGEventCreateMouseEvent(IntPtr.Zero, cgEvent, new CGPoint(absX, absY), cgButton);
         if (evt != IntPtr.Zero)
         {
             CGEventPost(kCGHIDEventTap, evt);
@@ -89,8 +117,9 @@ public class MacInputInjector : IInputInjector
         }
     }
 
-    public void InjectMouseUp(MouseButton button, int x, int y)
+    public void InjectMouseUp(MouseButton button, double percentX, double percentY)
     {
+        var (absX, absY) = GetAbsoluteCoordinates(percentX, percentY);
         var (cgEvent, cgButton) = button switch
         {
             MouseButton.Right => (CGEventType.RightMouseUp, CGMouseButton.Right),
@@ -98,7 +127,7 @@ public class MacInputInjector : IInputInjector
             _ => (CGEventType.LeftMouseUp, CGMouseButton.Left)
         };
 
-        var evt = CGEventCreateMouseEvent(IntPtr.Zero, cgEvent, new CGPoint(x, y), cgButton);
+        var evt = CGEventCreateMouseEvent(IntPtr.Zero, cgEvent, new CGPoint(absX, absY), cgButton);
         if (evt != IntPtr.Zero)
         {
             CGEventPost(kCGHIDEventTap, evt);

@@ -11,24 +11,24 @@ public enum MouseButton
 public class MouseMoveMessage : IProtocolMessage
 {
     public string Type => MessageTypes.MouseMove;
-    public int X { get; set; }
-    public int Y { get; set; }
+    public double X { get; set; }
+    public double Y { get; set; }
 }
 
 public class MouseDownMessage : IProtocolMessage
 {
     public string Type => MessageTypes.MouseDown;
     public MouseButton Button { get; set; }
-    public int X { get; set; }
-    public int Y { get; set; }
+    public double X { get; set; }
+    public double Y { get; set; }
 }
 
 public class MouseUpMessage : IProtocolMessage
 {
     public string Type => MessageTypes.MouseUp;
     public MouseButton Button { get; set; }
-    public int X { get; set; }
-    public int Y { get; set; }
+    public double X { get; set; }
+    public double Y { get; set; }
 }
 
 public class MouseWheelMessage : IProtocolMessage

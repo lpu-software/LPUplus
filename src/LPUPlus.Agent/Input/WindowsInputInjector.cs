@@ -8,17 +8,17 @@ public class WindowsInputInjector : IInputInjector
     // Implementation placeholder for Windows.
     // In a real implementation, we would P/Invoke SendInput from user32.dll
 
-    public void InjectMouseMove(int x, int y)
+    public void InjectMouseMove(double x, double y)
     {
         // P/Invoke SendInput
     }
 
-    public void InjectMouseDown(MouseButton button, int x, int y)
+    public void InjectMouseDown(MouseButton button, double x, double y)
     {
         // P/Invoke SendInput
     }
 
-    public void InjectMouseUp(MouseButton button, int x, int y)
+    public void InjectMouseUp(MouseButton button, double x, double y)
     {
         // P/Invoke SendInput
     }

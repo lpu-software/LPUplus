@@ -19,8 +19,11 @@ export class WebRtcClient {
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
     });
 
-    // Create the video stream channel
-    this.videoChannel = this.pc.createDataChannel("video_stream");
+    // Create the video stream channel (Unreliable, unordered for lowest latency)
+    this.videoChannel = this.pc.createDataChannel("video_stream", {
+      ordered: false,
+      maxRetransmits: 0
+    });
     this.videoChannel.binaryType = "arraybuffer";
     this.videoChannel.onmessage = (event) => {
       if (this.onFrame) {

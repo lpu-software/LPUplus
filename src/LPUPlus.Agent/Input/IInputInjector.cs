@@ -7,9 +7,9 @@ namespace LPUPlus.Agent.Input;
 /// </summary>
 public interface IInputInjector
 {
-    void InjectMouseMove(int x, int y);
-    void InjectMouseDown(MouseButton button, int x, int y);
-    void InjectMouseUp(MouseButton button, int x, int y);
+    void InjectMouseMove(double x, double y);
+    void InjectMouseDown(MouseButton button, double x, double y);
+    void InjectMouseUp(MouseButton button, double x, double y);
     void InjectMouseWheel(int deltaX, int deltaY);
     void InjectKeyDown(string key);
     void InjectKeyUp(string key);
