@@ -1,0 +1,19 @@
+# Build folders
+bin/
+obj/
+
+# Node.js
+node_modules/
+dist/
+.env
+
+# Logs and temp files
+*.log
+*.pid
+agent.log
+agent.pid
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

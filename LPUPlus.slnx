@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LPUPlus.Agent/LPUPlus.Agent.csproj" />
+    <Project Path="src/LPUPlus.Protocol/LPUPlus.Protocol.csproj" />
+    <Project Path="src/LPUPlus.Server/LPUPlus.Server.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LPUPlus.Agent.Tests/LPUPlus.Agent.Tests.csproj" />
+    <Project Path="tests/LPUPlus.Protocol.Tests/LPUPlus.Protocol.Tests.csproj" />
+    <Project Path="tests/LPUPlus.Server.Tests/LPUPlus.Server.Tests.csproj" />
+  </Folder>
+</Solution>
