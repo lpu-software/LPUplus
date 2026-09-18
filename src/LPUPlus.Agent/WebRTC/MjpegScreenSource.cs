@@ -20,12 +20,17 @@ public class MjpegScreenSource : IDisposable
         // -nostdin = don't read from stdin (prevents hangs)
         // -loglevel error = suppress noisy output
         // Note: RedirectStandardError must be false to prevent pipe buffer deadlock
+        bool isWindows = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
+        string ffmpegArgs = isWindows
+            ? "-nostdin -f gdigrab -framerate 30 -i desktop -vf scale=1280:-1 -q:v 8 -loglevel error -f image2pipe -vcodec mjpeg -"
+            : "-nostdin -f avfoundation -capture_cursor 1 -pix_fmt uyvy422 -i \"1\" -vf scale=1280:-1 -q:v 8 -r 30 -loglevel error -f image2pipe -vcodec mjpeg -";
+
         _ffmpegProcess = new Process
         {
             StartInfo = new ProcessStartInfo
             {
                 FileName = "ffmpeg",
-                Arguments = "-nostdin -f avfoundation -capture_cursor 1 -pix_fmt uyvy422 -i \"1\" -vf scale=1280:-1 -q:v 8 -r 30 -loglevel error -f image2pipe -vcodec mjpeg -",
+                Arguments = ffmpegArgs,
                 RedirectStandardOutput = true,
                 RedirectStandardError = false,
                 UseShellExecute = false,

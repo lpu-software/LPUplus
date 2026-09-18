@@ -21,6 +21,13 @@ if (-not $dotnetInstalled) {
     Write-Host "[1/3] .NET 8.0 SDK already installed."
 }
 
+# 1.5 Check FFmpeg
+if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
+    Write-Host "[1.5/3] Installing FFmpeg (required for screen capture)..."
+    winget install Gyan.FFmpeg --accept-source-agreements --accept-package-agreements --silent
+    $env:PATH = "$env:LOCALAPPDATA\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg\bin;$env:PATH"
+}
+
 # 2. Clone/Update Repo
 $InstallDir = Join-Path $env:USERPROFILE ".lpuplus"
 if ((Test-Path $InstallDir) -and (Test-Path (Join-Path $InstallDir ".git"))) {
