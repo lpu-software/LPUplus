@@ -69,7 +69,14 @@ public sealed class WebRtcManager : IDisposable
             {
                 if (_videoChannel != null && _videoChannel.readyState == RTCDataChannelState.open)
                 {
-                    _videoChannel.send(jpegBytes);
+                    if (jpegBytes.Length <= 262144)
+                    {
+                        try { _videoChannel.send(jpegBytes); } catch { }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[WebRTC] Dropped frame (too large: {jpegBytes.Length} bytes)");
+                    }
                 }
             };
 
