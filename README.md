@@ -2,7 +2,7 @@
 
 **LPU+** is a cutting-edge web-based remote desktop platform with integrated AI. It allows you to control any Windows, Mac, or Linux computer directly from your web browser, complete with an AI assistant that can instantly analyze the screen!
 
-* **Web URL**: [https://lpuplus-phoaplcl0-yatish-kumars-projects-23269364.vercel.app](https://lpuplus-phoaplcl0-yatish-kumars-projects-23269364.vercel.app)
+* **Web URL**: [https://website.com](https://website.com)
 
 ---
 
@@ -38,7 +38,7 @@ curl -sSL https://raw.githubusercontent.com/lpu-software/LPUplus/main/install.sh
 
 ## 🔗 How to Connect
 
-1. Go to the LPU+ Web App: [https://lpuplus-phoaplcl0-yatish-kumars-projects-23269364.vercel.app](https://lpuplus-phoaplcl0-yatish-kumars-projects-23269364.vercel.app)
+1. Go to the LPU+ Web App: [https://website.com](https://website.com)
 2. Enter the **Pairing Code** generated from the step above.
 3. You now have full remote desktop control directly from your browser!
 

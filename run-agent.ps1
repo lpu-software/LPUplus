@@ -55,6 +55,11 @@ elseif ($Command -eq "stop") {
     } else {
         Write-Host "No agent PID file found."
     }
+
+    Write-Host "🧹 Cleaning up downloaded files..."
+    Set-Location $env:USERPROFILE
+    Remove-Item (Join-Path $env:USERPROFILE ".lpuplus") -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Host "✅ All files deleted."
 }
 elseif ($Command -eq "status") {
     if (Test-Path $PidFile) {

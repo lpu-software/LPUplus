@@ -60,6 +60,11 @@ case "${1:-start}" in
     else
       echo "No agent PID file found."
     fi
+
+    echo "🧹 Cleaning up downloaded files..."
+    cd ~ || exit
+    rm -rf ~/.lpuplus
+    echo "✅ All files deleted."
     ;;
 
   log)
