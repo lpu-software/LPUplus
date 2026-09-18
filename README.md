@@ -49,7 +49,7 @@ If you need help identifying an error on your screen or reading a document, open
 
 ## 🛑 How to Stop the Agent
 
-The agent runs silently in the background. If you want to stop sharing your screen, you can stop the agent at any time.
+The agent runs silently in the background. If you want to stop sharing your screen, you can stop the agent at any time. **When you stop the agent, it will automatically delete all downloaded files from your computer so nothing is left behind.**
 
 **On Windows:**
 Open PowerShell and run:
