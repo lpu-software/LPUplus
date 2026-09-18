@@ -59,8 +59,6 @@ public sealed class WebRtcManager : IDisposable
                 }
             };
 
-            FFmpegInit.Initialise(null, "/opt/homebrew/lib");
-            
             _peerConnection = new RTCPeerConnection(config);
 
             // Start the screen capture source
