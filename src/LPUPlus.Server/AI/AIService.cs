@@ -95,6 +95,22 @@ public sealed class AIService
             {
                 var errorBody = await response.Content.ReadAsStringAsync();
                 _logger.LogError("Groq API Error: {Error}", errorBody);
+
+                // Fetch available models to see what Groq actually supports right now
+                try 
+                {
+                    var modelsRequest = new HttpRequestMessage(HttpMethod.Get, "https://api.groq.com/openai/v1/models")
+                    {
+                        Headers = { { "Authorization", $"Bearer {_apiKey}" } }
+                    };
+                    var modelsResponse = await _httpClient.SendAsync(modelsRequest);
+                    if (modelsResponse.IsSuccessStatusCode)
+                    {
+                        var modelsJson = await modelsResponse.Content.ReadAsStringAsync();
+                        _logger.LogError("Available Groq Models: {Models}", modelsJson);
+                    }
+                } 
+                catch { }
             }
             
             response.EnsureSuccessStatusCode();
