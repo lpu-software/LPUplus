@@ -98,8 +98,11 @@ public sealed class WebRtcManager : IDisposable
                         if (protocol == SIPSorcery.Net.DataChannelPayloadProtocols.WebRTC_String && data != null)
                         {
                             var text = System.Text.Encoding.UTF8.GetString(data);
-                            OnControlMessageReceived?.Invoke(text);
-                            ProcessControlMessage(text);
+                            Task.Run(() => 
+                            {
+                                OnControlMessageReceived?.Invoke(text);
+                                ProcessControlMessage(text);
+                            });
                         }
                     };
                 }
@@ -194,31 +197,37 @@ public sealed class WebRtcManager : IDisposable
 
     private void ProcessControlMessage(string json)
     {
-        Console.WriteLine($"[WebRTC] Control Message: {json}");
-        var msg = MessageSerializer.Deserialize(json);
-        if (msg == null) return;
-
-        switch (msg)
+        try
         {
-            case MouseMoveMessage mm:
-                Console.WriteLine($"[WebRTC] Extracted MM: X={mm.X}, Y={mm.Y}");
-                _inputInjector.InjectMouseMove(mm.X, mm.Y);
-                break;
-            case MouseDownMessage md:
-                _inputInjector.InjectMouseDown(md.Button, md.X, md.Y);
-                break;
-            case MouseUpMessage mu:
-                _inputInjector.InjectMouseUp(mu.Button, mu.X, mu.Y);
-                break;
-            case MouseWheelMessage mw:
-                _inputInjector.InjectMouseWheel(mw.DeltaX, mw.DeltaY);
-                break;
-            case KeyDownMessage kd:
-                _inputInjector.InjectKeyDown(kd.Key);
-                break;
-            case KeyUpMessage ku:
-                _inputInjector.InjectKeyUp(ku.Key);
-                break;
+            Console.WriteLine($"[WebRTC] Control Message: {json}");
+            var msg = MessageSerializer.Deserialize(json);
+            if (msg == null) return;
+
+            switch (msg)
+            {
+                case MouseMoveMessage mm:
+                    _inputInjector.InjectMouseMove(mm.X, mm.Y);
+                    break;
+                case MouseDownMessage md:
+                    _inputInjector.InjectMouseDown(md.Button, md.X, md.Y);
+                    break;
+                case MouseUpMessage mu:
+                    _inputInjector.InjectMouseUp(mu.Button, mu.X, mu.Y);
+                    break;
+                case MouseWheelMessage mw:
+                    _inputInjector.InjectMouseWheel(mw.DeltaX, mw.DeltaY);
+                    break;
+                case KeyDownMessage kd:
+                    _inputInjector.InjectKeyDown(kd.Key);
+                    break;
+                case KeyUpMessage ku:
+                    _inputInjector.InjectKeyUp(ku.Key);
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[WebRTC] Error processing control message: {ex}");
         }
     }
 
