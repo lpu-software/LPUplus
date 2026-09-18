@@ -38,9 +38,9 @@ export class SignalingClient {
   public async connect(): Promise<void> {
     if (this.ws?.readyState === WebSocket.OPEN) return;
 
-    // Use environment variable, fallback to current host if deploying together, or default to localhost:5000 for local dev
+    // Use environment variable, fallback to current host if deploying together, or default to localhost:5121 for local dev
     const wsUrl = this.url || import.meta.env.VITE_WS_URL || 
-                  (window.location.hostname === 'localhost' ? 'ws://localhost:5000' : `wss://${window.location.host}`);
+                  (window.location.hostname === 'localhost' ? 'ws://localhost:5121' : `wss://${window.location.host}`);
 
     return new Promise((resolve, reject) => {
       this.ws = new WebSocket(wsUrl);
