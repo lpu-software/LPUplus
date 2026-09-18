@@ -65,6 +65,7 @@ case "${1:-start}" in
     cd ~ || exit
     rm -rf ~/.lpuplus
     echo "✅ All files deleted."
+    echo "⚠️  Note: If your terminal was inside the .lpuplus folder, type 'cd ~' to return to your home directory."
     ;;
 
   log)

@@ -60,6 +60,7 @@ elseif ($Command -eq "stop") {
     Set-Location $env:USERPROFILE
     Remove-Item (Join-Path $env:USERPROFILE ".lpuplus") -Recurse -Force -ErrorAction SilentlyContinue
     Write-Host "✅ All files deleted."
+    Write-Host "⚠️  Note: If your terminal was inside the .lpuplus folder, type 'cd ~' to return to your home directory."
 }
 elseif ($Command -eq "status") {
     if (Test-Path $PidFile) {
