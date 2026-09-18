@@ -23,8 +23,8 @@ public sealed class AgentService : IDisposable
     {
         _hmacSecret = "LPUPlusSharedSecret";
         
-        // TODO: Load from config, hardcoded for Phase 3/4 dev
-        _signalingClient = new SignalingClient("ws://localhost:5121/ws");
+        var wsUrl = Environment.GetEnvironmentVariable("LPU_WS_URL") ?? "wss://lpuplus-server.onrender.com/ws";
+        _signalingClient = new SignalingClient(wsUrl);
         _signalingClient.OnSessionRequest += HandleSessionRequestAsync;
         _signalingClient.OnDisconnected += () => Stop("Disconnected from signaling server");
 
