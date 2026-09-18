@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SignalingClient } from './signaling/SignalingClient';
 import type { PairResponseMessage } from './signaling/SignalingClient';
 import { WebRtcClient } from './webrtc/WebRtcClient';
@@ -11,15 +11,12 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [deviceName, setDeviceName] = useState('');
   const [streamActive, setStreamActive] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isToolbarVisible, setIsToolbarVisible] = useState(true);
   const [isAIOpen, setIsAIOpen] = useState(false);
   
   const signaling = useRef<SignalingClient | null>(null);
   const webrtc = useRef<WebRtcClient | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const sessionRef = useRef<HTMLDivElement>(null);
-  const toolbarTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Expose imgRef globally for AIAssistant
   useEffect(() => {
@@ -64,33 +61,12 @@ function App() {
 
 
 
-  // Fullscreen listener
-  useEffect(() => {
-    const handler = () => setIsFullscreen(!!document.fullscreenElement);
-    document.addEventListener('fullscreenchange', handler);
-    return () => document.removeEventListener('fullscreenchange', handler);
-  }, []);
 
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
       await sessionRef.current?.requestFullscreen();
     } else {
       await document.exitFullscreen();
-    }
-  };
-
-  const takeScreenshot = () => {
-    if (!imgRef.current) return;
-    const c = document.createElement('canvas');
-    c.width = imgRef.current.naturalWidth;
-    c.height = imgRef.current.naturalHeight;
-    const ctx = c.getContext('2d');
-    if (ctx) {
-      ctx.drawImage(imgRef.current, 0, 0);
-      const a = document.createElement('a');
-      a.download = `screenshot-${Date.now()}.png`;
-      a.href = c.toDataURL('image/png');
-      a.click();
     }
   };
 
@@ -318,7 +294,7 @@ function App() {
 
       {/* AI Drawer */}
       <div className={`ai-drawer ${isAIOpen ? 'ai-drawer-open' : ''}`}>
-        {signaling.current && <AIAssistant signaling={signaling.current} videoRef={imgRef} />}
+        {signaling.current && <AIAssistant signaling={signaling.current} videoRef={imgRef as React.RefObject<HTMLImageElement>} />}
       </div>
     </div>
   );
