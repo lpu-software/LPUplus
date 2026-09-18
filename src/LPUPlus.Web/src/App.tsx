@@ -98,12 +98,16 @@ function App() {
               setStreamActive(true);
             }
           };
+          let lastUrl = '';
           webrtc.current.onFrame = (frameBuffer) => {
             if (imgRef.current) {
               const blob = new Blob([frameBuffer], { type: 'image/jpeg' });
               const url = URL.createObjectURL(blob);
               imgRef.current.src = url;
-              imgRef.current.onload = () => URL.revokeObjectURL(url);
+              if (lastUrl) {
+                URL.revokeObjectURL(lastUrl);
+              }
+              lastUrl = url;
             }
           };
           webrtc.current.onDisconnected = () => {
