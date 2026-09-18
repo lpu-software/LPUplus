@@ -94,16 +94,16 @@ function App() {
           webrtc.current = new WebRtcClient(signaling.current!);
 
           webrtc.current.onConnected = () => {
-            console.log("WebRTC Connected — starting MJPEG stream");
             if (imgRef.current) {
-              imgRef.current.src = 'http://localhost:8765/stream';
-              imgRef.current.onload = () => setStreamActive(true);
-              imgRef.current.onerror = () => {
-                setTimeout(() => {
-                  if (imgRef.current) imgRef.current.src = 'http://localhost:8765/stream?' + Date.now();
-                }, 1000);
-              };
               setStreamActive(true);
+            }
+          };
+          webrtc.current.onFrame = (frameBuffer) => {
+            if (imgRef.current) {
+              const blob = new Blob([frameBuffer], { type: 'image/jpeg' });
+              const url = URL.createObjectURL(blob);
+              imgRef.current.src = url;
+              imgRef.current.onload = () => URL.revokeObjectURL(url);
             }
           };
           webrtc.current.onDisconnected = () => {

@@ -20,16 +20,12 @@ public sealed class WebRtcManager : IDisposable
     private readonly SignalingClient _signaling;
     private RTCPeerConnection? _peerConnection;
     private RTCDataChannel? _controlChannel;
+    private RTCDataChannel? _videoChannel;
     private readonly IInputInjector _inputInjector;
 
     private MjpegScreenSource? _mjpegSource;
-    private MjpegHttpServer? _mjpegServer;
     
-    /// <summary>
-    /// The port the MJPEG HTTP server is running on.
-    /// The frontend connects to http://localhost:{Port}/stream
-    /// </summary>
-    public int MjpegServerPort { get; } = 8765;
+
 
     public event Action<string>? OnControlMessageReceived;
 
@@ -67,16 +63,14 @@ public sealed class WebRtcManager : IDisposable
             
             _peerConnection = new RTCPeerConnection(config);
 
-            // Start the MJPEG HTTP server for video streaming
-            _mjpegServer = new MjpegHttpServer(MjpegServerPort);
-            _mjpegServer.Start();
-
             // Start the screen capture source
             _mjpegSource = new MjpegScreenSource();
             _mjpegSource.OnJpegFrame += (jpegBytes) =>
             {
-                // Push frames to the HTTP MJPEG server (no DataChannel needed!)
-                _mjpegServer.PushFrame(jpegBytes);
+                if (_videoChannel != null && _videoChannel.readyState == RTCDataChannelState.open)
+                {
+                    _videoChannel.send(jpegBytes);
+                }
             };
 
             // Data Channels are created by the caller (frontend). We listen for them.
@@ -96,7 +90,10 @@ public sealed class WebRtcManager : IDisposable
                         }
                     };
                 }
-                // video_stream DataChannel is no longer needed; video goes via HTTP
+                else if (channel.label == "video_stream")
+                {
+                    _videoChannel = channel;
+                }
             };
 
             // ICE Candidates
@@ -134,7 +131,6 @@ public sealed class WebRtcManager : IDisposable
                         _mjpegSource.Stop();
                         Console.WriteLine("[WebRTC] MJPEG source stopped.");
                     }
-                    _mjpegServer?.Stop();
                 }
             };
 
@@ -220,8 +216,6 @@ public sealed class WebRtcManager : IDisposable
 
         _mjpegSource?.Stop();
         _mjpegSource?.Dispose();
-        _mjpegServer?.Stop();
-        _mjpegServer?.Dispose();
         
         _peerConnection?.Close("disposing");
         _peerConnection?.Dispose();

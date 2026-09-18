@@ -5,10 +5,12 @@ export class WebRtcClient {
   private pc: RTCPeerConnection;
   private signaling: SignalingClient;
   private controlChannel: RTCDataChannel | null = null;
+  private videoChannel: RTCDataChannel | null = null;
   private iceQueue: RTCIceCandidateInit[] = [];
 
   public onConnected?: () => void;
   public onDisconnected?: () => void;
+  public onFrame?: (frameData: ArrayBuffer) => void;
 
   constructor(signaling: SignalingClient) {
     this.signaling = signaling;
@@ -16,6 +18,15 @@ export class WebRtcClient {
     this.pc = new RTCPeerConnection({
       iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
     });
+
+    // Create the video stream channel
+    this.videoChannel = this.pc.createDataChannel("video_stream");
+    this.videoChannel.binaryType = "arraybuffer";
+    this.videoChannel.onmessage = (event) => {
+      if (this.onFrame) {
+        this.onFrame(event.data);
+      }
+    };
 
     // Handle ICE candidates
     this.pc.onicecandidate = (event) => {
