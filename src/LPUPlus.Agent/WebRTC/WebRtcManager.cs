@@ -69,6 +69,12 @@ public sealed class WebRtcManager : IDisposable
             {
                 if (_videoChannel != null && _videoChannel.readyState == RTCDataChannelState.open)
                 {
+                    if (_videoChannel.bufferedAmount > 0)
+                    {
+                        Console.WriteLine($"[WebRTC] Dropped frame (Network congested: {_videoChannel.bufferedAmount} bytes buffered)");
+                        return;
+                    }
+
                     if (jpegBytes.Length <= 262144)
                     {
                         try { _videoChannel.send(jpegBytes); } catch { }
