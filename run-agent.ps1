@@ -25,7 +25,7 @@ if ($Command -eq "start") {
     for ($i = 0; $i -lt 10; $i++) {
         Start-Sleep -Seconds 1
         if (Test-Path $LogFile) {
-            $pairingCode = Select-String -Path $LogFile -Pattern "[A-Z0-9]{4}-[A-Z0-9]{4}" | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Value | Select-Object -Last 1
+            $pairingCode = Select-String -Path $LogFile -Pattern "[A-Z0-9]{4}-[A-Z0-9]{4}" -CaseSensitive | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Value | Select-Object -Last 1
             if ($pairingCode) {
                 break
             }
