@@ -25,7 +25,7 @@ public class MjpegScreenSource : IDisposable
             StartInfo = new ProcessStartInfo
             {
                 FileName = "ffmpeg",
-                Arguments = "-nostdin -f avfoundation -pix_fmt uyvy422 -i \"1\" -vf scale=1280:-1 -q:v 8 -r 30 -loglevel error -f image2pipe -vcodec mjpeg -",
+                Arguments = "-nostdin -f avfoundation -capture_cursor 1 -pix_fmt uyvy422 -i \"1\" -vf scale=1280:-1 -q:v 8 -r 30 -loglevel error -f image2pipe -vcodec mjpeg -",
                 RedirectStandardOutput = true,
                 RedirectStandardError = false,
                 UseShellExecute = false,

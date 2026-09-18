@@ -270,6 +270,13 @@ function App() {
                 <path d="M12 2a10 10 0 00-10 10h10V2z"/>
               </svg>
             </button>
+            <button className="topbar-btn" onClick={() => {
+              if (imgRef.current) imgRef.current.src = "";
+            }} title="Resync Stream">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/>
+              </svg>
+            </button>
             <button className="topbar-btn" onClick={toggleFullscreen} title="Fullscreen">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
