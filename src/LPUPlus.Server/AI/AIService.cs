@@ -11,6 +11,7 @@ public sealed class AIService
     private readonly HttpClient _httpClient;
     private readonly ILogger<AIService> _logger;
     private readonly string? _apiKey;
+    private readonly string _modelId = "llama-3.2-90b-vision-preview"; // 11b was decommissioned
 
     public AIService(HttpClient httpClient, ILogger<AIService> logger)
     {
@@ -66,7 +67,7 @@ public sealed class AIService
 
             var requestBody = new
             {
-                model = "llama-3.2-11b-vision-preview",
+                model = "llama-3.2-90b-vision-preview",
                 messages = new[]
                 {
                     new
@@ -108,7 +109,7 @@ public sealed class AIService
                 Success = true,
                 Response = text,
                 Provider = "Groq",
-                Model = "llama-3.2-11b-vision-preview"
+                Model = "llama-3.2-90b-vision-preview"
             };
         }
         catch (Exception ex)
