@@ -18,7 +18,8 @@ if ($Command -eq "start") {
     }
 
     Write-Host "Starting LPU+ Agent in background..."
-    $process = Start-Process -FilePath "dotnet" -ArgumentList "run --project `"$Project`" -- start" -RedirectStandardOutput $LogFile -RedirectStandardError $LogFile -PassThru -WindowStyle Hidden
+    $ErrLogFile = Join-Path $ScriptDir "agent_err.log"
+    $process = Start-Process -FilePath "dotnet" -ArgumentList "run --project `"$Project`" -- start" -RedirectStandardOutput $LogFile -RedirectStandardError $ErrLogFile -PassThru -WindowStyle Hidden
     $process.Id | Out-File -FilePath $PidFile -Encoding ASCII
 
     for ($i = 0; $i -lt 10; $i++) {
