@@ -42,12 +42,17 @@ public sealed class AIService
 
             if (!string.IsNullOrEmpty(request.ImageBase64))
             {
-                // Ensure data URI prefix is present
+                // Groq API requires raw base64 string without data URI prefix
                 var b64 = request.ImageBase64;
-                if (!b64.StartsWith("data:"))
+                if (b64.StartsWith("data:"))
                 {
-                    b64 = "data:image/jpeg;base64," + b64;
+                    b64 = b64.Substring(b64.IndexOf(',') + 1);
                 }
+                
+                b64 = "data:image/jpeg;base64," + b64; // Wait, let's use the correct openai format
+                // Groq OpenAI compatibility expects the standard OpenAI data URI format!
+                // Wait, if it fails to decode, it might be due to line breaks or whitespace in base64.
+                b64 = b64.Replace("\r", "").Replace("\n", "").Trim();
 
                 contentList.Add(new
                 {

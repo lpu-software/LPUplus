@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 });
 
 // Support dynamic port allocation (e.g. for Render, Heroku)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5121";
 builder.WebHost.UseUrls($"http://*:{port}");
 
 var app = builder.Build();
