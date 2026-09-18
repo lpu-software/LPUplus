@@ -61,7 +61,7 @@ public sealed class AIService
 
             var requestBody = new
             {
-                model = "qwen/qwen3.8-27b",
+                model = "llama-3.2-11b-vision-preview",
                 messages = new[]
                 {
                     new
@@ -103,7 +103,7 @@ public sealed class AIService
                 Success = true,
                 Response = text,
                 Provider = "Groq",
-                Model = "qwen/qwen3.8-27b"
+                Model = "llama-3.2-11b-vision-preview"
             };
         }
         catch (Exception ex)
