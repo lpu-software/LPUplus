@@ -55,7 +55,14 @@ public sealed class SignalingHandler
                 if (receiveResult.MessageType == WebSocketMessageType.Text)
                 {
                     // Read full message (might span multiple receives if > 16KB)
-                    var payloadSpan = buffer.AsSpan(0, receiveResult.Count);
+                    using var ms = new MemoryStream();
+                    ms.Write(buffer, 0, receiveResult.Count);
+                    while (!receiveResult.EndOfMessage)
+                    {
+                        receiveResult = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                        ms.Write(buffer, 0, receiveResult.Count);
+                    }
+                    var payloadSpan = ms.ToArray().AsSpan();
                     
                     var message = MessageSerializer.Deserialize(payloadSpan);
                     if (message != null)
