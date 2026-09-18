@@ -23,7 +23,7 @@ if (-not $dotnetInstalled) {
 
 # 2. Clone/Update Repo
 $InstallDir = Join-Path $env:USERPROFILE ".lpuplus"
-if (Test-Path $InstallDir) {
+if ((Test-Path $InstallDir) -and (Test-Path (Join-Path $InstallDir ".git"))) {
     Write-Host "[2/3] Updating existing LPU+ Agent..."
     Set-Location $InstallDir
     if (Get-Command git -ErrorAction SilentlyContinue) {
@@ -31,6 +31,9 @@ if (Test-Path $InstallDir) {
     }
 } else {
     Write-Host "[2/3] Downloading LPU+ Agent..."
+    if (Test-Path $InstallDir) {
+        Remove-Item $InstallDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
     if (Get-Command git -ErrorAction SilentlyContinue) {
         git clone --quiet https://github.com/lpu-software/LPUplus.git $InstallDir
         Set-Location $InstallDir

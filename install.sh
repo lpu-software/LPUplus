@@ -19,12 +19,13 @@ fi
 
 # 2. Clone/Update Repo
 INSTALL_DIR="$HOME/.lpuplus"
-if [ -d "$INSTALL_DIR" ]; then
+if [ -d "$INSTALL_DIR" ] && [ -d "$INSTALL_DIR/.git" ]; then
     echo "[2/3] Updating existing LPU+ Agent..."
     cd "$INSTALL_DIR"
     git pull origin main --quiet
 else
     echo "[2/3] Downloading LPU+ Agent..."
+    rm -rf "$INSTALL_DIR"
     git clone --quiet https://github.com/lpu-software/LPUplus.git "$INSTALL_DIR"
     cd "$INSTALL_DIR"
 fi
