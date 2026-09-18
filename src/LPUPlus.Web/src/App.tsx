@@ -98,17 +98,38 @@ function App() {
               setStreamActive(true);
             }
           };
-          let lastUrl = '';
-          webrtc.current.onFrame = (frameBuffer) => {
-            if (imgRef.current) {
-              const blob = new Blob([frameBuffer], { type: 'image/jpeg' });
-              const url = URL.createObjectURL(blob);
-              imgRef.current.src = url;
-              if (lastUrl) {
-                URL.revokeObjectURL(lastUrl);
+          let isDecoding = false;
+          let nextFrameBlob: Blob | null = null;
+
+          const processNextFrame = () => {
+            if (isDecoding || !nextFrameBlob || !imgRef.current) return;
+            
+            isDecoding = true;
+            const url = URL.createObjectURL(nextFrameBlob);
+            nextFrameBlob = null; // Consume the frame
+            
+            const prevUrl = imgRef.current.src;
+            
+            imgRef.current.onload = () => {
+              if (prevUrl && prevUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(prevUrl);
               }
-              lastUrl = url;
-            }
+              isDecoding = false;
+              // Instantly process the next frame if one arrived while we were decoding
+              processNextFrame(); 
+            };
+            
+            imgRef.current.onerror = () => {
+              isDecoding = false;
+              processNextFrame();
+            };
+            
+            imgRef.current.src = url;
+          };
+
+          webrtc.current.onFrame = (frameBuffer) => {
+            nextFrameBlob = new Blob([frameBuffer], { type: 'image/jpeg' });
+            processNextFrame();
           };
           webrtc.current.onDisconnected = () => {
             setStatus('error');
